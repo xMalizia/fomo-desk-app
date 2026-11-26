@@ -24,3 +24,19 @@ header { display: flex; align-items: center; gap: 10px; }
 #unpaired { padding-top: 20vh; text-align: center; }
 #unpaired h1 { font-size: 28px; }
 code { background: var(--card); padding: 1px 6px; border-radius: 6px; }
+.card { background: var(--card); border-radius: 16px; padding: 4px 14px 14px; margin-top: 20px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.grid div { background: #2c2c2e; border-radius: 10px; padding: 8px; }
+.grid b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+.grid span { color: var(--secondary); font-size: 11px; }
+.filters { display: flex; gap: 6px; margin: 10px 0 4px; }
+.filters button { background: #2c2c2e; color: var(--text); border: 0; border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+.filters button.on { background: var(--text); color: #000; }
+.log { list-style: none; margin: 0; padding: 0; }
+.log li { border-top: 1px solid #2c2c2e; padding: 8px 0; font-size: 13px; }
+.log .top { display: flex; justify-content: space-between; gap: 8px; }
+.log .trade { color: var(--green); font-weight: 600; }
+.log .skip { color: var(--secondary); }
+.log .why { color: var(--secondary); margin-top: 2px; word-break: break-word; }
+.log a { color: #64a8ff; text-decoration: none; }
+.pill { font-size: 10px; border-radius: 999px; padding: 1px 6px; background: #3a2a00; color: var(--orange); margin-left: 4px; }

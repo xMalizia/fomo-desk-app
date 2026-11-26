@@ -1,6 +1,6 @@
 /* Service worker: caches the app shell only. Encrypted data under d/ is never cached.
    All paths are relative to the SW scope, so it works under a GitHub Pages subpath. */
-const CACHE = 'desk-shell-v2';
+const CACHE = 'desk-shell-v3';
 const SHELL = ['./', 'index.html', 'app.css', 'app.js', 'manifest.json',
                'icons/icon-192.png', 'icons/icon-512.png'];
 

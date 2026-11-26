@@ -33,6 +33,20 @@
         <p class="muted" id="note"></p>
         <p class="muted small">Updated <span id="updated">—</span> <span id="age"></span></p>
         <p class="error" id="error" hidden></p>
+        <div class="card" id="counts-card" hidden>
+          <p class="label">This night (PAPER, logging only)</p>
+          <div class="grid" id="counts"></div>
+          <p class="muted small" id="skip-reasons"></p>
+          <p class="muted small" id="warn-line"></p>
+          <p class="muted small" id="book-line"></p>
+        </div>
+        <div class="card" id="log-card" hidden>
+          <p class="label">Decision log</p>
+          <div class="filters">
+            <button data-f="all" class="on">All</button><button data-f="trade">Trades</button><button data-f="skip">Skips</button>
+          </div>
+          <ul class="log" id="log"></ul>
+        </div>
         <div class="frame">
           <p class="label">Screen</p>
           <img id="screen" alt="Latest screen frame" hidden />

@@ -84,7 +84,60 @@ function render(state) {
   $('updated').textContent = updatedAt && !isNaN(updatedAt)
     ? updatedAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'medium' }) : '—';
   tickAge();
+  renderCounts(state);
 }
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderCounts(state) {
+  const c = state.counts;
+  if (!c) return;
+  $('counts-card').hidden = false;
+  const w = c.fomo_warning_predicted || {};
+  const cells = [
+    ['New tokens', c.seen && c.seen.new_tokens], ['Migrations', c.seen && c.seen.migrations],
+    ['Dex fresh', c.seen && c.seen.dex_discovered], ['Scanned', c.scanned], ['Analyzed', c.analyzed],
+    ['PAPER trades', c.trade], ['Skips', c.skip], ['Warn (pred.)', `${w.flagged ?? 0}/${w.checked ?? 0}`],
+    ['Open', state.paper ? state.paper.open : '—'],
+  ];
+  $('counts').innerHTML = cells.map(([k, v]) => `<div><b>${esc(v ?? '—')}</b><span>${esc(k)}</span></div>`).join('');
+  const top = (c.top_skip_reasons || []).slice(0, 5).map(([r, n]) => `${r} ×${n}`).join(' · ');
+  $('skip-reasons').textContent = top ? `Top skip reasons: ${top}` : '';
+  const by = Object.entries(w.by_reason || {}).map(([k, v]) => `${k} ${v}`).join(', ');
+  $('warn-line').textContent = `FOMO warning box: ${w.flagged ?? 0} of ${w.checked ?? 0} coins PREDICTED (not observed)${by ? ' — ' + by : ''}`;
+  const b = state.paper;
+  $('book-line').textContent = b ? `PAPER book: cash $${b.cash.toFixed(2)} · equity $${b.equity.toFixed(2)} (${b.pnl >= 0 ? '+' : ''}${b.pnl.toFixed(2)}) · fees $${b.fees.toFixed(2)}` : '';
+  if (state.paused) $('note').textContent = 'PAUSED · ' + (state.note || '');
+}
+
+let logFilter = 'all';
+let lastActivity = null;
+function renderLog(act) {
+  if (act) lastActivity = act;
+  if (!lastActivity) return;
+  $('log-card').hidden = false;
+  const rows = (lastActivity.decisions || []).filter((d) => logFilter === 'all' || d.decision === logFilter);
+  $('log').innerHTML = rows.slice(0, 100).map((d) => {
+    const t = new Date(d.ts);
+    const when = isNaN(t) ? '' : t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const head = d.decision === 'trade'
+      ? `<span class="trade">PAPER BUY $${Number(d.size_usd).toFixed(2)}</span>` : `<span class="skip">skip · ${esc(d.stage)}</span>`;
+    const warn = d.fomo_warning_predicted ? `<span class="pill" title="${esc((d.fomo_warning_reasons || []).join('; '))}">warn (pred.)</span>` : '';
+    const name = d.coin_url ? `<a href="${esc(d.coin_url)}" target="_blank" rel="noopener noreferrer">${esc(d.symbol || d.mint.slice(0, 6))}</a>` : esc(d.symbol || d.mint.slice(0, 6));
+    return `<li><div class="top"><span>${name}${warn}</span><span>${head} <span class="skip">${when}</span></span></div>`
+      + `<div class="why">${esc((d.reasons || []).join(' · '))}</div></li>`;
+  }).join('') || '<li class="skip">No decisions yet</li>';
+}
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.filters button');
+  if (!b) return;
+  logFilter = b.dataset.f;
+  document.querySelectorAll('.filters button').forEach((x) => x.classList.toggle('on', x === b));
+  renderLog();
+});
 
 async function refreshFrame() {
   try {
@@ -109,6 +162,10 @@ async function poll() {
       render(JSON.parse(new TextDecoder().decode(raw)));
       $('error').hidden = true;
     }
+    try {
+      const a = await fetchDecrypted('activity.json');
+      if (a) renderLog(JSON.parse(new TextDecoder().decode(a)));
+    } catch (e) { /* log is optional */ }
     await refreshFrame();
   } catch (e) {
     $('error').hidden = false;
