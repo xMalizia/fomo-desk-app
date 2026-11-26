@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Desk" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Grok Bot Desk</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <section id="unpaired" hidden>
+      <h1>Not paired</h1>
+      <p class="muted">
+        This app has no key yet. Open the private pairing link from your desk
+        (the one that ends in <code>#k=…</code>) on this phone.
+      </p>
+    </section>
+
+    <section id="paired" hidden>
+      <header>
+        <div class="brand">Grok Bot ›</div>
+        <span class="badge" id="mode-badge">—</span>
+      </header>
+      <main>
+        <p class="label">Balance</p>
+        <p class="balance" id="balance">—</p>
+        <p class="muted" id="note"></p>
+        <p class="muted small">Updated <span id="updated">—</span> <span id="age"></span></p>
+        <p class="error" id="error" hidden></p>
+        <div class="frame">
+          <p class="label">Screen</p>
+          <img id="screen" alt="Latest screen frame" hidden />
+          <p class="muted small" id="no-frame">No screen frame yet</p>
+        </div>
+      </main>
+    </section>
+
+    <script src="app.js"></script>
+  </body>
+</html>
